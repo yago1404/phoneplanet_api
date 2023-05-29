@@ -15,4 +15,14 @@ export class UsersService {
     delete newUser.password;
     return newUser;
   }
+
+  async checkEmail(email: string): Promise<boolean> {
+    const users: User[] = await this.repository.findBy({ email: email });
+    return users.length === 0;
+  }
+
+  async checkCpf(cpf: string): Promise<boolean> {
+    const users: User[] = await this.repository.findBy({ cpf: cpf });
+    return users.length === 0;
+  }
 }

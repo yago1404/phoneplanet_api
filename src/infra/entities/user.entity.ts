@@ -19,6 +19,9 @@ export class User {
   password: string;
 
   @Column()
+  cpf: string;
+
+  @Column()
   email: string;
 
   @Column({ nullable: true })
@@ -27,7 +30,7 @@ export class User {
   @Column()
   birthday: Date;
 
-  @OneToOne(() => Address, { cascade: true })
+  @OneToOne(() => Address, { cascade: true, nullable: true })
   @JoinColumn()
   address: Address;
 }

@@ -6,22 +6,15 @@ import {
   Post,
   Query,
   Res,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { UserDto } from '../infra/dto/user.dto';
-import { LoginDto } from '../infra/dto/login.dto';
 import { UsersService } from './users.service';
 import { CreateUserDto } from '../infra/dto/createUser.dto';
 
 @Controller('users')
 export class UsersController {
   constructor(private service: UsersService) {}
-
-  @Get('/check-auth')
-  async checkAuth(): Promise<object> {
-    return { statusCode: 200, result: 'authenticated' };
-  }
 
   @Get('/check-availability')
   async checkEmail(
@@ -48,6 +41,14 @@ export class UsersController {
     @Res() res,
   ): Promise<UserDto | object> {
     try {
+      const canUseEmail: boolean = await this.service.checkEmail(newUser.email);
+      const canUseCpf: boolean = await this.service.checkCpf(newUser.cpf);
+      if (!(canUseEmail && canUseCpf)) {
+        return res.status(409).json({
+          statusCode: 409,
+          message: 'O E-mail ou CPF já esta sendo usado por outro usuário',
+        });
+      }
       const user: UserDto = await this.service.createUser(newUser);
       return res.status(200).json({ statusCode: 200, result: user });
     } catch (e) {
@@ -65,13 +66,5 @@ export class UsersController {
         .status(500)
         .json({ statusCode: 500, message: 'Internal Server Error' });
     }
-  }
-
-  @Post('/login')
-  async authenticate(@Body() login: LoginDto): Promise<UserDto> {
-    if (login.password !== 'password') {
-      throw new UnauthorizedException('Invalid username or password');
-    }
-    return new UserDto();
   }
 }

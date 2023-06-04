@@ -22,6 +22,9 @@ export class UsersController {
     @Query('cpf') cpf: string,
     @Res() res,
   ): Promise<Response> {
+    console.log('GET :: /users/check-availability');
+    console.log(`PARAM email :: ${email}`);
+    console.log(`PARAM cpf :: ${cpf}`);
     const canUseEmail: boolean = email
       ? await this.service.checkEmail(email)
       : true;

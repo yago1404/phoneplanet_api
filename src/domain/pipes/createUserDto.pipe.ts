@@ -1,6 +1,6 @@
 import { PipeTransform, Injectable, BadRequestException } from '@nestjs/common';
-import { LoginDto } from '../dto/login.dto';
-import { CreateUserDto } from '../dto/createUser.dto';
+import { LoginDto } from '../../infra/dto/login.dto';
+import { CreateUserDto } from '../../infra/dto/createUser.dto';
 
 @Injectable()
 export class CreateUserDtoPipe implements PipeTransform<any, CreateUserDto> {

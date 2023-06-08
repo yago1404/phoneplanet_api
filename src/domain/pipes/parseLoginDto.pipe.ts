@@ -1,5 +1,5 @@
 import { PipeTransform, Injectable, BadRequestException } from '@nestjs/common';
-import { LoginDto } from '../dto/login.dto';
+import { LoginDto } from '../../infra/dto/login.dto';
 
 @Injectable()
 export class ParseLoginDtoPipe implements PipeTransform<any, LoginDto> {

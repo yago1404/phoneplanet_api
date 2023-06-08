@@ -5,7 +5,7 @@ import { UsersService } from './users.service';
 import { User } from '../infra/entities/user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Address } from '../infra/entities/address.entity';
-import { ParseLoginDtoPipe } from '../infra/pipes/parseLoginDto.pipe';
+import { ParseLoginDtoPipe } from '../domain/pipes/parseLoginDto.pipe';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User, Address])],

@@ -13,10 +13,10 @@ import { UserDto } from '../infra/dto/user.dto';
 import { UsersService } from './users.service';
 import { CreateUserDto } from '../infra/dto/createUser.dto';
 import { LoginDto } from '../infra/dto/login.dto';
-import { ParseLoginDtoPipe } from '../infra/pipes/parseLoginDto.pipe';
+import { ParseLoginDtoPipe } from '../domain/pipes/parseLoginDto.pipe';
 import { User } from '../infra/entities/user.entity';
 import { rethrow } from '@nestjs/core/helpers/rethrow';
-import { CreateUserDtoPipe } from '../infra/pipes/createUserDto.pipe';
+import { CreateUserDtoPipe } from '../domain/pipes/createUserDto.pipe';
 
 @Controller('users')
 export class UsersController {

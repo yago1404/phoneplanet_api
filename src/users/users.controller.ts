@@ -6,6 +6,7 @@ import {
   Post,
   Query,
   Res,
+  UnauthorizedException,
   UsePipes,
 } from '@nestjs/common';
 import { Response } from 'express';
@@ -14,6 +15,9 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from '../infra/dto/createUser.dto';
 import { LoginDto } from '../infra/dto/login.dto';
 import { ParseLoginDtoPipe } from '../infra/pipes/parseLoginDto.pipe';
+import { User } from '../infra/entities/user.entity';
+import { rethrow } from '@nestjs/core/helpers/rethrow';
+import { CreateUserDtoPipe } from '../infra/pipes/createUserDto.pipe';
 
 @Controller('users')
 export class UsersController {
@@ -42,6 +46,7 @@ export class UsersController {
   }
 
   @Post('/create')
+  @UsePipes(CreateUserDtoPipe)
   async createUser(
     @Body() newUser: CreateUserDto,
     @Res() res,
@@ -58,19 +63,13 @@ export class UsersController {
       const user: UserDto = await this.service.createUser(newUser);
       return res.status(200).json({ statusCode: 200, result: user });
     } catch (e) {
-      if (e == BadRequestException) {
-        return res
-          .status(400)
-          .json({ statusCode: 400, message: 'Bad Request' });
-      } else if (e.routine == 'DateTimeParseError') {
+      if (e.routine == 'DateTimeParseError') {
         return res.status(400).json({
           statusCode: 400,
           message: 'Verifique se o campo de data foi enviado como YYYY-MM-DD',
         });
       }
-      return res
-        .status(500)
-        .json({ statusCode: 500, message: 'Internal Server Error' });
+      rethrow(e);
     }
   }
 
@@ -80,8 +79,15 @@ export class UsersController {
     @Body() loginDto: LoginDto,
     @Res() res: Response,
   ): Promise<Response> {
+    const user: User = await this.service.doLogin(loginDto);
+    if (user == null) {
+      throw new UnauthorizedException({
+        statusCode: 401,
+        message: 'Login ou senha incorretos',
+      });
+    }
     return res
       .status(200)
-      .json({ statusCode: 200, result: { jwt: 'ASDASDADS', login: loginDto } });
+      .json({ statusCode: 200, result: { jwt: 'ASDASDADS' } });
   }
 }

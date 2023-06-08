@@ -4,6 +4,7 @@ import { User } from '../infra/entities/user.entity';
 import { UserDto } from '../infra/dto/user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from '../infra/dto/createUser.dto';
+import { LoginDto } from '../infra/dto/login.dto';
 
 @Injectable()
 export class UsersService {
@@ -24,5 +25,14 @@ export class UsersService {
   async checkCpf(cpf: string): Promise<boolean> {
     const users: User[] = await this.repository.findBy({ cpf: cpf });
     return users.length === 0;
+  }
+
+  async doLogin(loginDto: LoginDto): Promise<User> {
+    const user: User = await this.repository.findOneBy({
+      email: loginDto.email,
+      password: loginDto.password,
+    });
+    if (user !== null) delete user.password;
+    return user;
   }
 }

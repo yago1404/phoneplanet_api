@@ -6,11 +6,14 @@ import {
   Post,
   Query,
   Res,
+  UsePipes,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { UserDto } from '../infra/dto/user.dto';
 import { UsersService } from './users.service';
 import { CreateUserDto } from '../infra/dto/createUser.dto';
+import { LoginDto } from '../infra/dto/login.dto';
+import { ParseLoginDtoPipe } from '../infra/pipes/parseLoginDto.pipe';
 
 @Controller('users')
 export class UsersController {
@@ -69,5 +72,16 @@ export class UsersController {
         .status(500)
         .json({ statusCode: 500, message: 'Internal Server Error' });
     }
+  }
+
+  @Post('/login')
+  @UsePipes(ParseLoginDtoPipe)
+  async doLogin(
+    @Body() loginDto: LoginDto,
+    @Res() res: Response,
+  ): Promise<Response> {
+    return res
+      .status(200)
+      .json({ statusCode: 200, result: { jwt: 'ASDASDADS', login: loginDto } });
   }
 }

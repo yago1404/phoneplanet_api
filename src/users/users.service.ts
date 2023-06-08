@@ -35,4 +35,8 @@ export class UsersService {
     if (user !== null) delete user.password;
     return user;
   }
+
+  async registerRefreshToken(id: number, refreshToken: string): Promise<void> {
+    await this.repository.update({ id }, { refreshToken });
+  }
 }

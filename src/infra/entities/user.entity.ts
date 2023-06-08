@@ -33,4 +33,7 @@ export class User {
   @OneToOne(() => Address, { cascade: true, nullable: true })
   @JoinColumn()
   address: Address;
+
+  @Column({ nullable: true })
+  refreshToken: string;
 }

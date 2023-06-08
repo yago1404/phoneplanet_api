@@ -58,7 +58,12 @@ export class UsersController {
         });
       }
       const user: UserDto = await this.service.createUser(newUser);
-      return res.status(200).json({ statusCode: 200, result: user });
+      const jwt = await AuthUtil.generateJwt(user.name, user.id);
+      const refreshToken: string = await AuthUtil.generateRefreshToken();
+      await this.service.registerRefreshToken(user.id, refreshToken);
+      return res
+        .status(200)
+        .json({ statusCode: 200, result: { jwt, refreshToken, user } });
     } catch (e) {
       if (e.routine == 'DateTimeParseError') {
         return res.status(400).json({
@@ -84,6 +89,10 @@ export class UsersController {
       });
     }
     const jwt = await AuthUtil.generateJwt(user.name, user.id);
-    return res.status(200).json({ statusCode: 200, result: { jwt: jwt } });
+    const refreshToken: string = await AuthUtil.generateRefreshToken();
+    await this.service.registerRefreshToken(user.id, refreshToken);
+    return res
+      .status(200)
+      .json({ statusCode: 200, result: { jwt, refreshToken } });
   }
 }

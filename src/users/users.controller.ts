@@ -17,6 +17,7 @@ import { ParseLoginDtoPipe } from '../domain/pipes/parseLoginDto.pipe';
 import { User } from '../infra/entities/user.entity';
 import { rethrow } from '@nestjs/core/helpers/rethrow';
 import { CreateUserDtoPipe } from '../domain/pipes/createUserDto.pipe';
+import { AuthUtil } from '../domain/utils/auth.util';
 
 @Controller('users')
 export class UsersController {
@@ -28,9 +29,6 @@ export class UsersController {
     @Query('cpf') cpf: string,
     @Res() res,
   ): Promise<Response> {
-    console.log('GET :: /users/check-availability');
-    console.log(`PARAM email :: ${email}`);
-    console.log(`PARAM cpf :: ${cpf}`);
     const canUseEmail: boolean = email
       ? await this.service.checkEmail(email)
       : true;
@@ -85,8 +83,7 @@ export class UsersController {
         message: 'Login ou senha incorretos',
       });
     }
-    return res
-      .status(200)
-      .json({ statusCode: 200, result: { jwt: 'ASDASDADS' } });
+    const jwt = await AuthUtil.generateJwt(user.name, user.id);
+    return res.status(200).json({ statusCode: 200, result: { jwt: jwt } });
   }
 }
